@@ -33,12 +33,12 @@ $server = "localhost";
 $user = "root";
 $pass = "";
 
-$database = "pa12025";
+$database = "proyecto";
 
 $conn = mysqli_connect($server, $user, $pass);
 mysqli_select_db($conn, $database);
 
-$base_url = "http://localhost/pa12025/";
+$base_url = "http://localhost/proyectoUISIL/";
 
 if (isset($_COOKIE['usuario']) and $_COOKIE['usuario'] != ''){
     $idUsuario = $_COOKIE['usuario'];
