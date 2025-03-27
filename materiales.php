@@ -1,3 +1,4 @@
+<!--coneccion a la base de datos y plantilla-->
 <?php 
 include("conn/conn.php");
 
@@ -9,7 +10,7 @@ include("template/rootTop.php");
 <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
         class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
 </div>
-
+<!-- Guardar los datos -->
 <?php
 if (isset($_POST['action']) && $_POST['action'] == 'guardar_material' ) { 
     $nom = $_POST['nom'];
@@ -24,7 +25,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar_material' ) {
     exit();
 }
 ?>
-
+<!-- Agregar los datos -->
     <div class="container-fluid">
     <div class="row">
         <div class="col-3">
@@ -62,11 +63,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar_material' ) {
             <textarea type="text" class="form-control" id="des"required></textarea>
             </div>
             </div>
-            <button class="btn btn-sm btn-block btn-secondary" onclick="guardarmaterial()">Guardar</button>
+            <button class="btn btn-sm btn-block btn-secondary" onclick="guardarmaterial()">Guardar</button>        
         
-        
-
     <script>
+        // Funcion para guardar los datos   
         function guardarmaterial (){
 
             var nom = $('#nom').val();
