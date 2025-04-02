@@ -249,7 +249,7 @@ $(document).ready(function() {
         lengthMenu: [
             [5, 10, 25, 50],
             [5, 10, 25, 50]
-        ], // Opciones de filas por página
+        ], // Opciones de filas por página.
         pageLength: 10, // Cantidad de filas por defecto
         responsive: true // Hace la tabla responsive
     });
