@@ -1,8 +1,8 @@
-<!--coneccion a la base de datos y plantilla-->
+<!--conexion a la base de datos y plantilla-->
 <?php 
-include("conn/conn.php");
+include("../../conn/conn.php");
 
-include("template/rootTop.php");
+include("../../template/Top.php");
 ?>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">

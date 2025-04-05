@@ -15,19 +15,19 @@
 </li>
 
 <li class="nav-item active">
-    <a class="nav-link" href="<?=$base_url?>materiales.php">
+    <a class="nav-link" href="<?=$base_url?>modulos/recursos/materiales.php">
     <i class="fas fa-fw fa-tachometer-alt"></i>
     <span>Materiales</span></a>
 </li>
 
 <li class="nav-item active">
-    <a class="nav-link" href="<?=$base_url?>recursoh.php">
+    <a class="nav-link" href="<?=$base_url?>modulos/recursos/recursoh.php">
         <i class="fas fa-fw fa-tachometer-alt"></i>
         <span>Recurso Humano</span></a>
 </li>
 
 <li class="nav-item active">
-    <a class="nav-link" href="<?=$base_url?>financiero.php">
+    <a class="nav-link" href="<?=$base_url?>modulos/recursos/financiero.php">
         <i class="fas fa-fw fa-tachometer-alt"></i>
         <span>Financiero</span></a>
 </li>
