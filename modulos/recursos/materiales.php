@@ -266,7 +266,7 @@ function cargarProyectos() {
     });
 }
 
-
+//Funcion para abrir modal 
 function abrirModalProyecto(idmaterial) {
 
     limpiarModal();
