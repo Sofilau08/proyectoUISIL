@@ -311,7 +311,6 @@ function cargarUsuarios(){
         $('#usuarios').html(data);
     });
 }
-
 cargarUsuarios();
 
 function guardarUsuario(){
