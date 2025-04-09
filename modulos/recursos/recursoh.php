@@ -1,7 +1,7 @@
 <!-- Conexión a la base de datos y plantilla -->
 <?php 
-include("conn/conn.php");
-include("template/rootTop.php");
+include("../../conn/conn.php");
+include("../../template/Top.php");
 ?>
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -21,7 +21,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar_financiero') {
     $horas_t = $_POST['horas_t'];
     $salario_pagar = $_POST['salario_pagar'];
 
-    $sql = "INSERT INTO cliente (identificacion, apel, telefono, horas_t, estado) VALUES ('$ced', '$apel', '', '$horas_t', '$salario_pagar')";
+    $sql = "INSERT INTO cliente (identificacion, apel, telefono, horas_t, estado) VALUES ('$ced', '$nom', '$apel', , '$horas_t', '$salario_pagar')";
     $query = mysqli_query($conn, $sql);
     exit();
 }
@@ -32,9 +32,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar_financiero') {
     <div class="row">
         <div class="col-3">
             <?php
+            // se selecciona el id de la tabla tusuarios
             $sql = "SELECT id FROM tusuarios";
             $resultado = $conn->query($sql);
             ?>
+            <!-- Se selecciona el usuario -->
             <div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                     Seleccionar ID Usuario
@@ -53,7 +55,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar_financiero') {
             </div>
         </div>
     </div>
-    
+    <!-- Se agregan los datos -->
     <div class="row">
         <div class="col-3">
             <div class="mb-3">
@@ -98,6 +100,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar_financiero') {
 </div>
 
 <script>
+    //funcion para el guardado de los datos
     function guardarfinanzas() {
         var nom = $('#nom').val();
         var apel = $('#apel').val();
@@ -119,7 +122,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar_financiero') {
             $('#nom, #apel, #ced, #salario_base, #horas_t, #salario_pagar').val('');
         });
     }
-
+    // funcion para cargar los datos del usuario
     function cargarDatosUsuario(idUsuario) {
         fetch('obtener_usuario.php?id=' + idUsuario)
             .then(response => response.json())

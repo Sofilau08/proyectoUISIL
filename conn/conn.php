@@ -33,7 +33,7 @@ $server = "localhost";
 $user = "root";
 $pass = "";
 
-$database = "proyectcore1";
+$database = "proyectcore2";
 
 $conn = mysqli_connect($server, $user, $pass);
 mysqli_select_db($conn, $database);
