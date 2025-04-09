@@ -100,7 +100,6 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                             <th>Acciones</th>
                         </tr>
                     </thead>
-
                     <tbody>
 
                         <?php while ($fila = mysqli_fetch_assoc($resultado)): ?>
@@ -111,6 +110,10 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                             <td><?= $fila['estado'] ?></td>
                             <td>
                                 <div>
+                                <button class="btn btn-sm btn-success"
+                                        onclick="abrirModalProyecto(<?= $fila['idproyecto'] ?>)">
+                                        <i class="fa fa-tasks"></i>
+                                    </button>
                                     <button class="btn btn-sm btn-secondary"
                                         onclick="abrirModalProyecto(<?= $fila['idproyecto'] ?>)">
                                         <i class="fa fa-pen"></i>
@@ -266,7 +269,7 @@ function limpiarModal() {
     $("#modalProyecto select[name='idusuario']").val("");
 
     $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Crear');
-    // Cambiar el título del modal
+    // Cambia el título del modal
     $("#modalProyectoLabel").text("Nuevo Proyecto");
 }
 
@@ -277,6 +280,7 @@ function cargarProyectos() {
     });
 }
 
+cargarProyectos();
 
 function abrirModalProyecto(idProyecto) {
 
