@@ -1,9 +1,6 @@
 <?php
 include("../../conn/conn.php");
 
-// Obtener lista de usuarios para el combo
-$usuarios = mysqli_query($conn, "SELECT id, nombre,apellidos FROM tusuarios");
-
 // Crear o actualizar material
 if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
     $idmaterial = $_POST['idmaterial']; // Puede estar vacío si es un nuevo material
@@ -256,7 +253,7 @@ function limpiarModal() {
     $("#modalProyectoLabel").text("Editar material");
     $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
 
-    $("#modalProyectoLabel").text("Nuevo Proyecto");
+    $("#modalProyectoLabel").text("Nuevo Material");
 }
 
 function cargarProyectos() {
@@ -333,7 +330,7 @@ function guardarProyecto() {
 }
 
 function eliminarProyecto(idmaterial) {
-    if (confirm('¿Eliminar Material?')) {
+    if (confirm('¿Seguro que desea eliminar el Material?')) {
         $.post("materiales.php", {
                 action: "eliminar",
                 idmaterial: idmaterial
