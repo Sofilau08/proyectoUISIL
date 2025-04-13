@@ -235,15 +235,15 @@ function limpiarModal() {
     $("#modalProyecto input[name='monto']").val(""); 
 
 
-    $("#modalProyectoLabel").text("Editar material");
+    $("#modalProyectoLabel").text("Editar Financiero");
     $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
     $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Crear');
     // Cambiar el título del modal
 
-    $("#modalProyectoLabel").text("Editar financiero");
+    $("#modalProyectoLabel").text("Editar Financiero");
     $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
 
-    $("#modalProyectoLabel").text("Nuevo Material");
+    $("#modalProyectoLabel").text("Nuevo Financiero");
 }
 
 function cargarProyectos() {
