@@ -210,7 +210,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                         </button>
                         </button>
                     </div>
-                    //puedes crear el modal para agregar una tarea a un proyecto aqui, que utilice el ID del proyecto acorde a la linea en la que esta 
+                    
                 </div>
             </div>
 
