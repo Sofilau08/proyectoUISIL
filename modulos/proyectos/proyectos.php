@@ -73,6 +73,18 @@ if ($_GET['action'] == 'editar') {
     exit();
 }
 
+if ($_GET['action'] == 'listarTareas') {
+$idproyecto = $_GET['idproyecto'];
+    $resultado = $conexion->query("SELECT * FROM tareas WHERE idproyecto = $idproyecto");
+
+    $tareas = [];
+    while ($fila = $resultado->fetch_assoc()) {
+        $tareas[] = $fila;
+    }
+    echo json_encode($tareas);
+    exit();
+}
+
 // Obtener Todos los Proyectos
 $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
 ?>
@@ -111,7 +123,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                             <td>
                                 <div>
                                     <button class="btn btn-sm btn-success"
-                                        onclick="abrirModalProyecto(<?= $fila['idproyecto'] ?>)">
+                                        onclick="cargarTareas(<?= $fila['idproyecto'] ?>)">
                                         <i class="fa fa-tasks"></i>
                                     </button>
                                     <button class="btn btn-sm btn-secondary"
@@ -215,6 +227,52 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
             </div>
 
         </form>
+    </div>
+</div>
+
+<div class="modal fade" id="modalTareas" tabindex="-1" role="dialog" aria-labelledby="modalTareasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tareas del Proyecto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Lista de tareas existentes -->
+                <div id="tareasLista">
+                    <!-- Aquí se inyectarán dinámicamente las tareas vía AJAX -->
+                </div>
+                <hr>
+                <!-- Formulario para agregar o editar una tarea -->
+                <form id="formTarea">
+                    <input type="hidden" id="idtarea" name="idtarea">
+                    <input type="hidden" id="idproyectoTarea" name="idproyecto">
+                    <div class="form-group">
+                        <label for="tituloTarea">Título</label>
+                        <input type="text" class="form-control" id="tituloTarea" name="titulo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="descripcionTarea">Descripción</label>
+                        <textarea class="form-control" id="descripcionTarea" name="descripcion" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="fechaEntregaTarea">Fecha de Entrega</label>
+                        <input type="date" class="form-control" id="fechaEntregaTarea" name="fecha_entrega">
+                    </div>
+                    <div class="form-group">
+                        <label for="estadoTarea">Estado</label>
+                        <select class="form-control" id="estadoTarea" name="estado">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en proceso">En proceso</option>
+                            <option value="completada">Completada</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-success" onclick="guardarTarea()">Guardar Tarea</button>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -391,6 +449,42 @@ function abrirModalAgregarTareas(idTarea) {
     $("#modalProyecto").modal('show');
 
 }
+
+function cargarTareas(idproyecto) {
+    $.get("proyectos.php", { action: "listarTareas", idproyecto: idproyecto }, function(data) {
+        let tareas = JSON.parse(data);
+        let html = "";
+        tareas.forEach(tarea => {
+            html += `<div class="card p-2 mb-2">
+                        <h5>${tarea.titulo}</h5>
+                        <p>${tarea.descripcion}</p>
+                        <p><strong>Estado:</strong> ${tarea.estado}</p>
+                     </div>`;
+        });
+        $("#tareasLista").html(html);
+    });
+}
+
+function guardarTarea() {
+    let datos = {
+        action: "guardarTarea",
+        idtarea: $("#idtarea").val() || 0,
+        idproyecto: $("#idproyectoTarea").val(),
+        titulo: $("#tituloTarea").val(),
+        descripcion: $("#descripcionTarea").val(),
+        fecha_entrega: $("#fechaEntregaTarea").val(),
+        estado: $("#estadoTarea").val()
+    };
+
+    $.post("proyectos.php", datos, function(res) {
+        if (res === "ok") {
+            $("#modalAgregarTarea").modal("hide");
+            cargarTareas(datos.idproyecto);
+        }
+    });
+}
+
+
 </script>
 
 
