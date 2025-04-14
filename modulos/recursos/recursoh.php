@@ -300,6 +300,7 @@ function cargarProyectos() {
 //Funcion para abrir modal 
 function abrirModalProyecto(idrehumano) {
 
+    limpiarModal()
     if (idrehumano != -1) {
         $.get("recursoh.php", {
                 action: "editar",
