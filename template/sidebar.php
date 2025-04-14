@@ -27,6 +27,12 @@
 </li>
 
 <li class="nav-item active">
+    <a class="nav-link" href="<?=$base_url?>modulos/soporte/crearTicketAdmin.php">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>Administrar ticket</span></a>
+</li>
+
+<li class="nav-item active">
     <a class="nav-link" href="<?=$base_url?>modulos/recursos/financiero.php">
         <i class="fas fa-fw fa-tachometer-alt"></i>
         <span>Financiero</span></a>
