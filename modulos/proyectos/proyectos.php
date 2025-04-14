@@ -110,7 +110,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                             <td><?= $fila['estado'] ?></td>
                             <td>
                                 <div>
-                                <button class="btn btn-sm btn-success"
+                                    <button class="btn btn-sm btn-success"
                                         onclick="abrirModalProyecto(<?= $fila['idproyecto'] ?>)">
                                         <i class="fa fa-tasks"></i>
                                     </button>
@@ -210,6 +210,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                         </button>
                         </button>
                     </div>
+                    //puedes crear el modal para agregar una tarea a un proyecto aqui, que utilice el ID del proyecto acorde a la linea en la que esta 
                 </div>
             </div>
 
@@ -239,7 +240,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
 </style>
 
 <script>
-    // Para poner la tabla en español 
+// Para poner la tabla en español 
 $(document).ready(function() {
     $("#tablaProyectos").DataTable({
         language: {
@@ -359,6 +360,36 @@ function eliminarProyecto(idproyecto) {
                 alert("Error: " + data.error);
             }
         });
+}
+
+function abrirModalAgregarTareas(idTarea) {
+
+    if (idTarea != -1) {
+        $.get("proyectos.php", {
+                action: "agregar_tarea",
+                idTarea: idTarea
+            })
+            .done(function(data) {
+                let tarea = JSON.parse(data);
+
+                // Llenar los campos del formulario en el modal
+                $("#modalProyecto input[name='idproyecto']").val(proyecto.idproyecto);
+                $("#modalProyecto input[name='nombre']").val(proyecto.nombre);
+                $("#modalProyecto input[name='fechainicio']").val(proyecto.fechainicio);
+                $("#modalProyecto input[name='fechafin']").val(proyecto.fechafin);
+                $("#modalProyecto textarea[name='descripcion']").val(proyecto.descripcion);
+                $("#modalProyecto select[name='estado']").val(proyecto.estado);
+                $("#modalProyecto select[name='idusuario']").val(proyecto.idusuario);
+
+                // Cambiar el título del modal
+                $("#modalProyectoLabel").text("Editar Proyecto");
+
+                $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
+
+            });
+    }
+    $("#modalProyecto").modal('show');
+
 }
 </script>
 
