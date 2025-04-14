@@ -24,7 +24,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
     $usuario = mysqli_fetch_assoc($usuarioQuery);
     $nombre_apellido = $usuario['nombre_apellido'];
 
-    if ($nombre_apellido == "" || $cedula == "" || $HorasT == "" || $SalarioBase == ""|| $SalarioT == "") {
+    if ($idusuario == "" || $cedula == "" || $HorasT == "" || $SalarioBase == ""|| $SalarioT == "") {
         // Validar que todos los campos estén llenos
         echo json_encode(["success" => false, "error" => "Todos los campos son obligatorios."]);
         exit();
@@ -34,12 +34,12 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
     if (empty($idrehumano) || $idrehumano == -1) {
         // Insertar nuevo material
         
-        $sql = "INSERT INTO trehumano (nombre_apellido, cedula, HorasT, SalarioT, SalarioBase) 
-                VALUES ('$nombre_apellido', '$cedula', '$HorasT', '$SalarioT', '$SalarioBase')";
+        $sql = "INSERT INTO trehumano (idusuario, cedula, HorasT, SalarioT, SalarioBase) 
+                VALUES ('$idusuario', '$cedula', '$HorasT', '$SalarioT', '$SalarioBase')";
     } else {
         // Actualizar material existente
         $sql = "UPDATE trehumano SET 
-                    nombre_apellido='$nombre_apellido', 
+                    idusuario='$idusuario', 
                     cedula='$cedula',   
                     HorasT='$HorasT', 
                     SalarioT='$SalarioT',
@@ -90,7 +90,7 @@ if ($_GET['action'] == 'editar') {
 }
 
 // Obtener Todos los Materiales
-$resultado = mysqli_query($conn, "SELECT * FROM trehumano");
+$resultado = mysqli_query($conn, "SELECT tre.*, CONCAT(tu.nombre, ' ', tu.apellidos) as nombre_apellido FROM trehumano as tre, tusuarios as tu WHERE tre.idusuario = tu.id");
 ?>
 
 <?php include("../../template/top.php"); ?>
@@ -172,7 +172,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM trehumano");
                                             <option value="<?= $user['id'] ?>"
                                                     data-cedula="<?= htmlspecialchars($user['Identificacion']) ?>"
                                                     data-salario="<?= htmlspecialchars($user['salario_hora']) ?>"
-                                                    <?= isset($proyecto['idusuario']) && $proyecto['id'] == $user['id'] ? 'selected' : '' ?>>
+                                                    <?= isset($proyecto['idusuario']) && $proyecto['idusuario'] == $user['id'] ? 'selected' : '' ?>>
                                                 <?= $user['nombre'] ?> <?= $user['apellidos'] ?>
                                             </option>
                                         <?php endwhile; ?>
