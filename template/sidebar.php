@@ -14,30 +14,6 @@
         <span>Inicio</span></a>
 </li>
 
-<li class="nav-item active">
-    <a class="nav-link" href="<?=$base_url?>modulos/recursos/materiales.php">
-    <i class="fas fa-fw fa-tachometer-alt"></i>
-    <span>Materiales</span></a>
-</li>
-
-<li class="nav-item active">
-    <a class="nav-link" href="<?=$base_url?>modulos/recursos/recursoh.php">
-        <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span>Recurso Humano</span></a>
-</li>
-
-<li class="nav-item active">
-    <a class="nav-link" href="<?=$base_url?>modulos/recursos/financiero.php">
-        <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span>Financiero</span></a>
-</li>
-
-<li class="nav-item active">
-    <a class="nav-link" href="<?=$base_url?>modulos/recursos/seguimiento.php">
-        <i class="fas fa-fw fa-tachometer-alt"></i>
-        <span>Aprobacion</span></a>
-</li>
-
 <?php
 $sql = "SELECT * FROM tprivilegios WHERE estado = 1 ORDER BY nombre ASC";
 $query = mysqli_query($conn, $sql);
