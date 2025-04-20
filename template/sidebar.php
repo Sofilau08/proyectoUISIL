@@ -14,6 +14,7 @@
         <span>Inicio</span></a>
 </li>
 
+
 <?php
 $sql = "SELECT * FROM tprivilegios WHERE estado = 1 ORDER BY nombre ASC";
 $query = mysqli_query($conn, $sql);

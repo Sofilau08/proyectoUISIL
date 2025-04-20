@@ -1,8 +1,6 @@
 <?php
 include("../../conn/conn.php");
 
-// Obtener lista de usuarios para el combo
-$usuarios = mysqli_query($conn, "SELECT id, nombre,apellidos FROM tusuarios");
 
 // Crear o actualizar Proyecto
 if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
@@ -13,8 +11,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
     $descripcion = $_POST['descripcion'];
     $estado = $_POST['estado'];
     $idusuario = $_POST['idusuario'];
+    $presupuesto = $_POST['presupuesto'];
 
-    if (empty($nombre) || empty($fechainicio) || empty($fechafin) || empty($descripcion) || empty($estado) || empty($idusuario)) {
+    if (empty($nombre) || empty($fechainicio) || empty($fechafin) || empty($descripcion) || empty($estado) || empty($idusuario)|| empty($presupuesto)) {
         echo json_encode(["success" => false, "error" => "Todos los campos son obligatorios."]);
         exit();
     }
@@ -22,8 +21,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
 
     if (empty($idproyecto) || $idproyecto == -1) {
         // Insertar nuevo proyecto
-        $sql = "INSERT INTO tproyectos (nombre, fechainicio, fechafin, descripcion, estado, idusuario) 
-                VALUES ('$nombre', '$fechainicio', '$fechafin', '$descripcion', '$estado', '$idusuario')";
+        $sql = "INSERT INTO tproyectos (nombre, fechainicio, fechafin, descripcion, estado, idusuario, presupuesto) 
+                VALUES ('$nombre', '$fechainicio', '$fechafin', '$descripcion', '$estado', '$idusuario', '$presupuesto')";
     } else {
         // Actualizar proyecto existente
         $sql = "UPDATE tproyectos SET 
@@ -32,7 +31,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
                     fechafin='$fechafin', 
                     descripcion='$descripcion', 
                     estado='$estado', 
-                    idusuario='$idusuario' 
+                    idusuario='$idusuario', 
+                    presupuesto='$presupuesto' 
                 WHERE idproyecto=$idproyecto";
     }
 
@@ -43,6 +43,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
     }
     exit();
 }
+
 
 
 // Eliminar Proyecto
@@ -73,8 +74,86 @@ if ($_GET['action'] == 'editar') {
     exit();
 }
 
-// Obtener Todos los Proyectos
-$resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
+if ($_GET['action'] == 'listarTareas') {
+    $idproyecto = $_GET['idProyecto'];
+
+    $resultado = mysqli_query($conn, "SELECT * FROM ttareas WHERE idproyecto = " . intval($idproyecto));
+    $tareas = [];
+
+    while ($fila = mysqli_fetch_assoc($resultado)) {
+        $tareas[] = $fila;
+    }
+    echo json_encode($tareas);
+    exit();
+}
+
+
+if ($_GET['action'] == 'cargarUsuarios') {
+   // Obtener lista de usuarios para el combo
+    $resultado = mysqli_query($conn, "SELECT id, nombre,apellidos FROM tusuarios");
+
+    $usuarios = [];
+
+    while ($fila = mysqli_fetch_assoc($resultado)) {
+        $usuarios[] = $fila;
+    }
+    echo json_encode($usuarios);
+    exit();
+}
+
+
+if ($_GET['action'] == 'cargarProyectos') {
+    // Obtener Todos los Proyectos
+     $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
+  
+      $proyectos = [];
+  
+      while ($fila = mysqli_fetch_assoc($resultado)) {
+          $proyectos[] = $fila;
+      }
+      echo json_encode($proyectos);
+      exit();
+  }
+
+// Guardar y editar tareas 
+if (isset($_POST['action']) && $_POST['action'] == 'guardarTarea') {
+    $idtarea = $_POST['idtarea'];
+    $idproyecto = $_POST['idproyecto'];
+    $titulo = $_POST['titulo'];
+    $descripcion = $_POST['descripcion'];
+    $fechainicio = $_POST['fechainicio'];
+    $fechafin = $_POST['fechafin'];
+    $idusuario = $_POST['idusuario'];
+    $estadotarea = $_POST['estadotarea'];
+
+    if (empty($idproyecto) || empty($titulo) || empty($descripcion) || empty($fechainicio) || empty($fechafin) || empty($idusuario) || empty($estadotarea)) {
+        echo json_encode(["success" => false, "error" => "Todos los campos son obligatorios."]);
+        exit();
+    }
+
+    if (empty($idtarea) || $idtarea == -1) {
+        $sql = "INSERT INTO ttareas (idproyecto, titulo, fechainicio, fechafin, descripcion, idusuario, estadotarea) 
+                VALUES ('$idproyecto', '$titulo', '$fechainicio', '$fechafin', '$descripcion', '$idusuario', '$estadotarea')";
+    } else {
+        $sql = "UPDATE ttareas SET 
+                    titulo='$titulo', 
+                    fechainicio='$fechainicio', 
+                    fechafin='$fechafin', 
+                    descripcion='$descripcion', 
+                    estadotarea='$estadotarea', 
+                    idusuario='$idusuario'
+                WHERE idtarea=$idtarea";
+    }
+
+    if (mysqli_query($conn, $sql)) {
+        echo json_encode(["success" => true]);
+    } else {
+        echo json_encode(["success" => false, "error" => mysqli_error($conn)]);
+    }
+    exit();
+}
+
+
 ?>
 
 <?php include("../../template/top.php"); ?>
@@ -100,29 +179,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                             <th>Acciones</th>
                         </tr>
                     </thead>
-
-                    <tbody>
-
-                        <?php while ($fila = mysqli_fetch_assoc($resultado)): ?>
-                        <tr>
-                            <td><?= $fila['nombre'] ?></td>
-                            <td><?= $fila['fechainicio'] ?></td>
-                            <td><?= $fila['fechafin'] ?></td>
-                            <td><?= $fila['estado'] ?></td>
-                            <td>
-                                <div>
-                                    <button class="btn btn-sm btn-secondary"
-                                        onclick="abrirModalProyecto(<?= $fila['idproyecto'] ?>)">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger"
-                                        onclick="if(confirm('¿Eliminar proyecto?')) eliminarProyecto(<?= $fila['idproyecto'] ?>)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
+                    <tbody id="tbodyProyectos">
                     </tbody>
                 </table>
             </div>
@@ -145,7 +202,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                 <div class="card shadow mb-4">
 
                     <div class="card-body">
-                        <form method="POST">
+                        
                             <input type="hidden" id="idproyecto" name="idproyecto"
                                 value="<?= $proyecto['idproyecto'] ?? '' ?>">
                             <div class="grid-container">
@@ -171,6 +228,11 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                                         name="descripcion"> <?= $proyecto['descripcion'] ?? '' ?></textarea>
                                 </div>
                                 <div>
+                                    <label>Presupuesto:</label>
+                                    <input type="text" class="form-control" id="presupuesto" name="presupuesto" required
+                                        value="<?= $proyecto['presupuesto'] ?? '' ?>">
+                                </div>
+                                <div>
                                     <label>Estado:</label>
                                     <select class="form-control" id="estado" name="estado">
                                         <option value="pendiente"
@@ -187,17 +249,10 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                                 <div>
                                     <label>Usuario:</label>
                                     <select class="form-control" id="idusuario" name="idusuario" required>
-                                        <?php while ($user = mysqli_fetch_assoc($usuarios)): ?>
-                                        <option value="<?= $user['id'] ?>"
-                                            <?= isset($proyecto['idusuario']) && $proyecto['idusuario'] == $user['id'] ? 'selected' : '' ?>>
-                                            <?= $user['nombre'] ?> <?= $user['apellidos'] ?>
-                                        </option>
-                                        <?php endwhile; ?>
+                                  
                                     </select>
                                 </div>
                             </div>
-
-                        </form>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -207,10 +262,73 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
                         </button>
                         </button>
                     </div>
+
                 </div>
             </div>
 
         </form>
+    </div>
+</div>
+
+<div class="modal fade" id="modalTareas" tabindex="-1" role="dialog" aria-labelledby="modalTareasLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tareas del Proyecto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Lista de tareas existentes -->
+                <div id="tareasLista">
+                    <!-- Aquí se inyectarán dinámicamente las tareas vía AJAX -->
+                </div>
+                <hr>
+                    <input type="hidden" id="idtarea" name="idtarea">
+                    <input type="hidden" id="idproyectoTarea" name="idproyectoTarea">
+
+                    <div class="form-group">
+                        <label for="tituloTarea">Título</label>
+                        <input type="text" class="form-control" id="tituloTarea" name="titulo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcionTarea">Descripción</label>
+                        <textarea class="form-control" id="descripcionTarea" name="descripcion" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fechaInicioTarea">Fecha de Inicio</label>
+                        <input type="datetime-local" class="form-control" id="fechaInicioTarea" name="fechainicio">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fechaFinTarea">Fecha de Fin</label>
+                        <input type="datetime-local" class="form-control" id="fechaFinTarea" name="fechafin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="idusuarioTarea">Asignar a Usuario</label>
+                        <select class="form-control" id="idusuario1" name="idusuario1" required>
+                          
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estadoTarea">Estado de la Tarea</label>
+                        <select class="form-control" id="estadoTarea" name="estadotarea">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="en proceso">En proceso</option>
+                            <option value="finalizado">Finalizado</option>
+                        </select>
+                    </div>
+
+                    <button type="button" class="btn btn-success" id="btn-guardarTarea" onclick="guardarTareas()">Guardar
+                        Tarea</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -236,7 +354,7 @@ $resultado = mysqli_query($conn, "SELECT * FROM tproyectos");
 </style>
 
 <script>
-    // Para poner la tabla en español 
+// Para poner la tabla en español 
 $(document).ready(function() {
     $("#tablaProyectos").DataTable({
         language: {
@@ -249,7 +367,7 @@ $(document).ready(function() {
         lengthMenu: [
             [5, 10, 25, 50],
             [5, 10, 25, 50]
-        ], // Opciones de filas por página
+        ], // Opciones de filas por página.
         pageLength: 10, // Cantidad de filas por defecto
         responsive: true // Hace la tabla responsive
     });
@@ -257,6 +375,7 @@ $(document).ready(function() {
 });
 
 function limpiarModal() {
+    
     $("#modalProyecto input[name='idproyecto']").val(-1);
     $("#modalProyecto input[name='nombre']").val("");
     $("#modalProyecto input[name='fechainicio']").val("");
@@ -264,17 +383,55 @@ function limpiarModal() {
     $("#modalProyecto textarea[name='descripcion']").val("");
     $("#modalProyecto select[name='estado']").val("");
     $("#modalProyecto select[name='idusuario']").val("");
+    $("#modalProyecto select[name='presupuesto']").val("");
 
     $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Crear');
-    // Cambiar el título del modal
+    // Cambia el título del modal
     $("#modalProyectoLabel").text("Nuevo Proyecto");
 }
 
 function cargarProyectos() {
-    $.get("proyectos.php", function(data) {
-        let nuevaTabla = $(data).find("#tablaProyectos tbody").html();
-        $("#tablaProyectos tbody").html(nuevaTabla);
-    });
+    $.get("proyectos.php", {
+            action: "cargarProyectos"
+        })
+        .done(function(data) {
+            let proyectos = JSON.parse(data);
+            let html = '';
+
+            if (proyectos.length === 0) {
+                html = '<p class="text-muted">No hay proyectos.</p>';
+            } else {
+                proyectos.forEach(function(proyecto) {
+                    html += `
+                        <tr>
+                            <td>${proyecto.nombre}</td>
+                            <td>${proyecto.fechainicio}</td>
+                            <td>${proyecto.fechafin}</td>
+                            <td>${proyecto.estado}</td>
+                            <td>
+                                <div>
+                                    <button class="btn btn-sm btn-success"
+                                        onclick="abrirModalAgregarTareas(${proyecto.idproyecto})">
+                                        <i class="fa fa-tasks"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary"
+                                        onclick="abrirModalProyecto(${proyecto.idproyecto})">
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger"
+                                        onclick="if(confirm('¿Eliminar proyecto?')) eliminarProyecto(${proyecto.idproyecto})">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            $('#tbodyProyectos').html(html);
+        });
+
 }
 
 
@@ -298,6 +455,7 @@ function abrirModalProyecto(idProyecto) {
                 $("#modalProyecto textarea[name='descripcion']").val(proyecto.descripcion);
                 $("#modalProyecto select[name='estado']").val(proyecto.estado);
                 $("#modalProyecto select[name='idusuario']").val(proyecto.idusuario);
+                $("#modalProyecto select[name='presupuesto']").val(proyecto.presupuesto);
 
                 // Cambiar el título del modal
                 $("#modalProyectoLabel").text("Editar Proyecto");
@@ -318,6 +476,7 @@ function guardarProyecto() {
     var descripcion = $('#descripcion').val();
     var estado = $('#estado').val();
     var idusuario = $('#idusuario').val();
+    var presupuesto = $('#presupuesto').val();
 
     $.post("proyectos.php", {
             action: "guardar", // Usamos el mismo action
@@ -327,7 +486,8 @@ function guardarProyecto() {
             fechafin: fechafin,
             descripcion: descripcion,
             estado: estado,
-            idusuario: idusuario
+            idusuario: idusuario,
+            presupuesto: presupuesto
         })
         .done(function(response) {
             let data = JSON.parse(response);
@@ -356,6 +516,105 @@ function eliminarProyecto(idproyecto) {
             }
         });
 }
+
+
+
+function abrirModalAgregarTareas(idProyecto) {
+    $('#idproyectoTarea').val(idProyecto);
+    $.get("proyectos.php", {
+            action: "listarTareas",
+            idProyecto: idProyecto
+        })
+        .done(function(data) {
+            let tareas = JSON.parse(data);
+            let html = '';
+
+            if (tareas.length === 0) {
+                html = '<p class="text-muted">No hay tareas registradas para este proyecto.</p>';
+            } else {
+                tareas.forEach(function(tarea) {
+                    html += `
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h5 class="card-title">${tarea.titulo}</h5>
+                                <p class="card-text">${tarea.descripcion}</p>
+                                <p class="card-text">
+                                    <strong>Inicio:</strong> ${tarea.fechainicio}<br>
+                                    <strong>Fin:</strong> ${tarea.fechafin}<br>
+                                    <strong>Estado Tarea:</strong> ${tarea.estadotarea}
+                                </p>
+                                <button class="btn btn-sm btn-primary" onclick="editarTarea(${tarea.idtarea})">Editar</button>
+                                <button class="btn btn-sm btn-danger" onclick="eliminarTarea(${tarea.idtarea})">Eliminar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            $('#tareasLista').html(html);
+        });
+    $("#modalTareas").modal('show');
+
+}
+
+function cargarUsuario(){
+    $.get("proyectos.php", {
+            action: "cargarUsuarios"
+        })
+        .done(function(data) {
+            let usuarios = JSON.parse(data);
+            let html = '';
+
+            if (usuarios.length === 0) {
+                html = '<p class="text-muted">No hay usuarios.</p>';
+            } else {
+                usuarios.forEach(function(usuario) {
+                    html += `
+                          <option value="${usuario.id}">
+                                ${usuario.nombre} ${usuario.apellidos} 
+                            </option>
+                    `;
+                });
+            }
+
+            $('#idusuario').html(html);
+            $('#idusuario1').html(html);
+        });
+}
+
+function guardarTareas() {
+    var id = $('#idproyectoTarea').val();
+    var idtarea = $('#idtarea').val();
+    var titulo = $('#tituloTarea').val();
+    var descripcion = $('#descripcionTarea').val();
+    var fechainicio = $('#fechaInicioTarea').val();
+    var fechafin = $('#fechaFinTarea').val();
+    var idusuario = $('#idusuario1').val();
+    var estadotarea = $('#estadoTarea').val(); 
+
+    $.post("proyectos.php", {
+            action: "guardarTarea", 
+            idproyecto: id,
+            idtarea: idtarea,
+            titulo: titulo,
+            descripcion: descripcion,
+            fechainicio: fechainicio,
+            fechafin: fechafin,
+            idusuario: idusuario,
+            estadotarea: estadotarea
+        }, function(response) {
+            let data = JSON.parse(response);
+            if (data.success) {
+                $('#modalTareas').modal('hide');
+            } else {
+                alert("Error: " + data.error);
+            }
+        });
+}
+
+
+cargarProyectos();
+cargarUsuario();
 </script>
 
 
