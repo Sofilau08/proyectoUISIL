@@ -268,6 +268,7 @@ $(document).ready(function() {
 });
 
 function limpiarModal() {
+    
     $("#modalProyecto input[name='idproyecto']").val(-1);
     $("#modalProyecto input[name='nombre']").val("");
     $("#modalProyecto input[name='fechainicio']").val("");
