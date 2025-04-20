@@ -401,8 +401,7 @@ function cargarProyectos() {
                 html = '<p class="text-muted">No hay proyectos.</p>';
             } else {
                 proyectos.forEach(function(proyecto) {
-                    html += `
-                        <tr>
+                    html += `<tr>
                             <td>${proyecto.nombre}</td>
                             <td>${proyecto.fechainicio}</td>
                             <td>${proyecto.fechafin}</td>
