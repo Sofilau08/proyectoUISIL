@@ -1,7 +1,8 @@
-<?php 
+<?php
 ini_set("display_errors", 0);
 
-function getClientIP() {
+function getClientIP()
+{
     $ipAddress = 'UNKNOWN';
 
     if (isset($_SERVER['HTTP_CLIENT_IP']) && filter_var($_SERVER['HTTP_CLIENT_IP'], FILTER_VALIDATE_IP)) {
@@ -31,7 +32,7 @@ function getClientIP() {
 
 $server = "localhost";
 $user = "root";
-$pass = "";
+$pass = "1408";
 
 $database = "proyectcore1";
 
@@ -40,27 +41,27 @@ mysqli_select_db($conn, $database);
 
 $base_url = "http://localhost/proyectoUISIL/";
 
-if (isset($_COOKIE['usuario']) and $_COOKIE['usuario'] != ''){
+if (isset($_COOKIE['usuario']) and $_COOKIE['usuario'] != '') {
     $idUsuario = $_COOKIE['usuario'];
     $tokenCookie = $_COOKIE['token'];
 
     $sql = "SELECT * FROM tusuarios WHERE id = $idUsuario";
     $query = mysqli_query($conn, $sql);
-    while($row=mysqli_fetch_assoc($query)){
+    while ($row = mysqli_fetch_assoc($query)) {
         $nombreUsuario = $row['nombre'];
         $token = $row['token'];
         $lastIP = $row['lastIP'];
     }
 
-    if ($tokenCookie != $token){
-        header('location: '.$base_url.'logout.php');
+    if ($tokenCookie != $token) {
+        header('location: ' . $base_url . 'logout.php');
     }
 
-    if (getClientIP() != $lastIP){
-        header('location: '.$base_url.'logout.php');
+    if (getClientIP() != $lastIP) {
+        header('location: ' . $base_url . 'logout.php');
     }
-}else{
-    if (basename($_SERVER['REQUEST_URI']) != 'login.php'){
-        header('location: '.$base_url.'login.php');
+} else {
+    if (basename($_SERVER['REQUEST_URI']) != 'login.php') {
+        header('location: ' . $base_url . 'login.php');
     }
 }

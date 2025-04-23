@@ -19,7 +19,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
 
     if (empty($idmaterial) || $idmaterial == -1) {
         // Insertar nuevo material
-        
+
         $sql = "INSERT INTO tmateriales (nombre, preciou, cantidad, descrip, preciott) 
                 VALUES ('$nombre', '$preciou', '$cantidad', '$descrip', '$preciott')";
     } else {
@@ -31,9 +31,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
                     descrip='$descrip',
                     preciott='$preciott'
                 WHERE idmaterial='$idmaterial'";
-
     }
-    error_log($sql); 
+    error_log($sql);
 
 
     if (mysqli_query($conn, $sql)) {
@@ -55,9 +54,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'eliminar') {
         echo json_encode(
             [
                 "success" => false,
-                 "error" => mysqli_error($conn)
-                 ]
-        
+                "error" => mysqli_error($conn)
+            ]
+
         );
     }
     exit();
@@ -104,25 +103,25 @@ $resultado = mysqli_query($conn, "SELECT * FROM tmateriales");
                     <tbody>
 
                         <?php while ($fila = mysqli_fetch_assoc($resultado)): ?>
-                        <tr>
-                            <td><?= $fila['nombre'] ?></td>
-                            <td><?= $fila['preciou'] ?></td>
-                            <td><?= $fila['preciott'] ?></td>
-                            <td><?= $fila['cantidad'] ?></td>
-                            <td><?= $fila['descrip'] ?></td>
-                            <td>
-                                <div>
-                                    <button class="btn btn-sm btn-secondary"
-                                        onclick="abrirModalProyecto(<?= $fila['idmaterial'] ?>)">
-                                        <i class="fa fa-pen"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger"
-                                        onclick="eliminarProyecto(<?= $fila['idmaterial'] ?>)">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td><?= $fila['nombre'] ?></td>
+                                <td><?= $fila['preciou'] ?></td>
+                                <td><?= $fila['preciott'] ?></td>
+                                <td><?= $fila['cantidad'] ?></td>
+                                <td><?= $fila['descrip'] ?></td>
+                                <td>
+                                    <div>
+                                        <button class="btn btn-sm btn-secondary"
+                                            onclick="abrirModalProyecto(<?= $fila['idmaterial'] ?>)">
+                                            <i class="fa fa-pen"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger"
+                                            onclick="eliminarProyecto(<?= $fila['idmaterial'] ?>)">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endwhile; ?>
                     </tbody>
                 </table>
@@ -195,172 +194,179 @@ $resultado = mysqli_query($conn, "SELECT * FROM tmateriales");
 </div>
 
 <style>
-.grid-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
 
-.grid-table {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
-    text-align: center;
-}
+    .grid-table {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+        text-align: center;
+    }
 
-.grid-header {
-    font-weight: bold;
-    background-color: #ddd;
-    padding: 5px;
-}
+    .grid-header {
+        font-weight: bold;
+        background-color: #ddd;
+        padding: 5px;
+    }
 </style>
 
 <script>
     // Para poner la tabla en español 
-$(document).ready(function() {
-    $("#tablaProyectos").DataTable({
-        language: {
-            url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json"
-        },
-        paging: true, // Habilita la paginación
-        searching: true, // Habilita el cuadro de búsqueda
-        ordering: true, // Permite ordenar columnas
-        info: true, // Muestra información de la tabla
-        lengthMenu: [
-            [5, 10, 25, 50],
-            [5, 10, 25, 50]
-        ], // Opciones de filas por página
-        pageLength: 10, // Cantidad de filas por defecto
-        responsive: true // Hace la tabla responsive
-    });
-    $("#tablaProyectos").addClass("text-right");
-});
-
-function limpiarModal() {
-    $("#modalProyecto input[name='idmaterial']").val(-1);
-    $("#modalProyecto input[name='nombre']").val("");
-    $("#modalProyecto input[name='preciou']").val("");
-    $("#modalProyecto input[name='cantidad']").val("");
-    $("#modalProyecto textarea[name='descrip']").val("");
-    $("#modalProyecto input[name='preciott']").val(""); 
-
-
-    $("#modalProyectoLabel").text("Editar material");
-    $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
-    $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Crear');
-    // Cambiar el título del modal
-
-    $("#modalProyectoLabel").text("Editar material");
-    $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
-
-    $("#modalProyectoLabel").text("Nuevo Material");
-}
-
-function cargarProyectos() {
-    $.get("materiales.php", function(data) {
-        let nuevaTabla = $(data).find("#tablaProyectos tbody").html();
-        $("#tablaProyectos tbody").html(nuevaTabla);
-    });
-}
-
-//Funcion para abrir modal 
-function abrirModalProyecto(idmaterial) {
-
-    limpiarModal();
-
-    if (idmaterial != -1) {
-        $.get("materiales.php", {
-                action: "editar",
-                idmaterial: idmaterial
-            })
-            .done(function(data) {
-                let proyecto = JSON.parse(data);
-
-                // Llenar los campos del formulario en el modal
-                $("#modalProyecto input[name='idmaterial']").val(proyecto.idmaterial);
-                $("#modalProyecto input[name='nombre']").val(proyecto.nombre);
-                $("#modalProyecto input[name='preciou']").val(proyecto.preciou);
-                $("#modalProyecto input[name='cantidad']").val(proyecto.cantidad);
-                $("#modalProyecto textarea[name='descrip']").val(proyecto.descrip);
-
-                //calcula el precio total
-                calcularPrecioTotal();
-
-                // Cambiar el título del modal
-                $("#modalProyectoLabel").text("Editar material");
-
-                $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
-
-            });
-    }
-    $("#modalProyecto").modal('show');
-
-}
-
-function guardarProyecto() {
-    var id = $('#idmaterial').val();
-    var nombre = $('#nombre').val();
-    var preciou = $('#preciou').val();
-    var cantidad = $('#cantidad').val();
-    var descrip = $('#descrip').val();
-    var preciott = $('#preciott').val();
-
-    console.log({ id, nombre, preciou, cantidad, descrip, preciott }); 
-
-
-    $.post("materiales.php", {
-            action: "guardar", 
-            idmaterial: id,
-            nombre: nombre,
-            preciou: preciou,
-            cantidad: cantidad,
-            descrip: descrip,
-            preciott: preciott
-        })
-        .done(function(response) {
-            let data = JSON.parse(response);
-            if (data.success) {
-                $('#modalProyecto').modal('hide');
-                //cargarProyectos();
-                document.location.href = document.location.href;
-            } else {
-                alert("Error: " + data.error);
-            }
+    $(document).ready(function() {
+        $("#tablaProyectos").DataTable({
+            language: {
+                url: "https://cdn.datatables.net/plug-ins/1.13.4/i18n/es-ES.json"
+            },
+            paging: true, // Habilita la paginación
+            searching: true, // Habilita el cuadro de búsqueda
+            ordering: true, // Permite ordenar columnas
+            info: true, // Muestra información de la tabla
+            lengthMenu: [
+                [5, 10, 25, 50],
+                [5, 10, 25, 50]
+            ], // Opciones de filas por página
+            pageLength: 10, // Cantidad de filas por defecto
+            responsive: true // Hace la tabla responsive
         });
-}
+        $("#tablaProyectos").addClass("text-right");
+    });
 
-function eliminarProyecto(idmaterial) {
-    if (confirm('¿Seguro que desea eliminar el Material?')) {
+    function limpiarModal() {
+        $("#modalProyecto input[name='idmaterial']").val(-1);
+        $("#modalProyecto input[name='nombre']").val("");
+        $("#modalProyecto input[name='preciou']").val("");
+        $("#modalProyecto input[name='cantidad']").val("");
+        $("#modalProyecto textarea[name='descrip']").val("");
+        $("#modalProyecto input[name='preciott']").val("");
+
+
+        $("#modalProyectoLabel").text("Editar material");
+        $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
+        $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Crear');
+        // Cambiar el título del modal
+
+        $("#modalProyectoLabel").text("Editar material");
+        $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
+
+        $("#modalProyectoLabel").text("Nuevo Material");
+    }
+
+    function cargarProyectos() {
+        $.get("materiales.php", function(data) {
+            let nuevaTabla = $(data).find("#tablaProyectos tbody").html();
+            $("#tablaProyectos tbody").html(nuevaTabla);
+        });
+    }
+
+    //Funcion para abrir modal 
+    function abrirModalProyecto(idmaterial) {
+
+        limpiarModal();
+
+        if (idmaterial != -1) {
+            $.get("materiales.php", {
+                    action: "editar",
+                    idmaterial: idmaterial
+                })
+                .done(function(data) {
+                    let proyecto = JSON.parse(data);
+
+                    // Llenar los campos del formulario en el modal
+                    $("#modalProyecto input[name='idmaterial']").val(proyecto.idmaterial);
+                    $("#modalProyecto input[name='nombre']").val(proyecto.nombre);
+                    $("#modalProyecto input[name='preciou']").val(proyecto.preciou);
+                    $("#modalProyecto input[name='cantidad']").val(proyecto.cantidad);
+                    $("#modalProyecto textarea[name='descrip']").val(proyecto.descrip);
+
+                    //calcula el precio total
+                    calcularPrecioTotal();
+
+                    // Cambiar el título del modal
+                    $("#modalProyectoLabel").text("Editar material");
+
+                    $("#btn-guardarProyecto").html('<i class="fas fa-check"></i> Actualizar');
+
+                });
+        }
+        $("#modalProyecto").modal('show');
+
+    }
+
+    function guardarProyecto() {
+        var id = $('#idmaterial').val();
+        var nombre = $('#nombre').val();
+        var preciou = $('#preciou').val();
+        var cantidad = $('#cantidad').val();
+        var descrip = $('#descrip').val();
+        var preciott = $('#preciott').val();
+
+        console.log({
+            id,
+            nombre,
+            preciou,
+            cantidad,
+            descrip,
+            preciott
+        });
+
+
         $.post("materiales.php", {
-                action: "eliminar",
-                idmaterial: idmaterial
+                action: "guardar",
+                idmaterial: id,
+                nombre: nombre,
+                preciou: preciou,
+                cantidad: cantidad,
+                descrip: descrip,
+                preciott: preciott
             })
             .done(function(response) {
                 let data = JSON.parse(response);
                 if (data.success) {
-                    alert("Se eliminó el material correctamente");
+                    $('#modalProyecto').modal('hide');
+                    //cargarProyectos();
                     document.location.href = document.location.href;
                 } else {
                     alert("Error: " + data.error);
                 }
             });
+    }
+
+    function eliminarProyecto(idmaterial) {
+        if (confirm('¿Seguro que desea eliminar el Material?')) {
+            $.post("materiales.php", {
+                    action: "eliminar",
+                    idmaterial: idmaterial
+                })
+                .done(function(response) {
+                    let data = JSON.parse(response);
+                    if (data.success) {
+                        alert("Se eliminó el material correctamente");
+                        document.location.href = document.location.href;
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                });
         }
-}
+    }
 
-$(document).ready(function() {
-    // calculo del precio total
-    $('#preciou, #cantidad').on('input', function() {
-        calcularPrecioTotal();
+    $(document).ready(function() {
+        // calculo del precio total
+        $('#preciou, #cantidad').on('input', function() {
+            calcularPrecioTotal();
+        });
     });
-});
 
-function calcularPrecioTotal() {
-    var precioUnitario = parseFloat($('#preciou').val()) || 0; 
-    var cantidad = parseFloat($('#cantidad').val()) || 0; 
-    var precioTotal = precioUnitario * cantidad;
+    function calcularPrecioTotal() {
+        var precioUnitario = parseFloat($('#preciou').val()) || 0;
+        var cantidad = parseFloat($('#cantidad').val()) || 0;
+        var precioTotal = precioUnitario * cantidad;
 
-    $('#preciott').val(precioTotal.toFixed(2)); 
-}
+        $('#preciott').val(precioTotal.toFixed(2));
+    }
 </script>
 
 

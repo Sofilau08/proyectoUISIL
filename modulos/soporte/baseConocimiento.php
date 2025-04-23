@@ -17,13 +17,12 @@ if (!$idUsuario) {
 if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
     ini_set("display_errors", 1);
 
-    $idticket = isset($_POST['idticket']) ? intval($_POST['idticket']) : -1;
+
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];
     $categoria = $_POST['categoria'];
     $prioridad = $_POST['prioridad'];
     $fechainicio = date('Y-m-d H:i');
-    $estado = 'abierto';
 
     if ($titulo == '' ||  $descripcion == '' ||  $prioridad == '' ||  $categoria == '') {
         echo json_encode(["success" => false, "error" => "Todos los campos son obligatorios."]);
@@ -39,9 +38,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
                     descripcion = '$descripcion',
                     categoria = '$categoria',
                     prioridad = '$prioridad',
-                    estado = '$estado'
+                    estado = '$estado',
                 WHERE idticket = $idticket";
-        echo "<script>alert('Tiquete Modificado Correctamente.');</script>";
+        echo "<script>alert('Tiquete actualizado correctamente.');</script>";
     }
 
     if (mysqli_query($conn, $sql)) {
@@ -107,62 +106,46 @@ include("../../template/top.php");
     const idUsuarioActual = <?= json_encode($idUsuario) ?>;
 </script>
 
-<div class="container">
-    <div class="text-right">
-        <!-- Botón para abrir el modal de crear tiquete -->
-        <button class="btn btn-sm btn-secondary mb-3" onclick="abrirModalTiquete(-1)">
-            <i class="fa fa-plus"></i> Nuevo Tiquete
-        </button>
+<!-- Tarjeta que contiene la tabla de tiquetes -->
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h2 class="m-0 font-weight-bold text-primary">Bienvenido a la Base de Conocimiento</h2>
     </div>
-
-    <!-- Tarjeta que contiene la tabla de tiquetes -->
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Lista de Tiquetes</h6>
-        </div>
-        <div class="card-body">
-            <!-- Tabla con los tiquetes -->
-            <table class="table table-bordered" id="tablaTickets">
-                <thead>
+    <div class="card-body">
+        <!-- Tabla con los tiquetes -->
+        <table class="table table-bordered" id="tablaTickets">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Categoría</th>
+                    <th>Prioridad</th>
+                    <th>Estado</th>
+                    <th>Fecha de Creación</th>
+                    <th>Creado por</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while ($fila = mysqli_fetch_assoc($tiquetes)): ?>
                     <tr>
-                        <th>Título</th>
-                        <th>Categoría</th>
-                        <th>Prioridad</th>
-                        <th>Estado</th>
-                        <th>Fecha de Creación</th>
-                        <th>Creado por</th>
-                        <th>Acciones</th>
+                        <td><?= $fila['titulo'] ?></td>
+                        <td><?= ucfirst($fila['categoria']) ?></td>
+                        <td><?= ucfirst($fila['prioridad']) ?></td>
+                        <td><?= ucfirst($fila['estado']) ?></td>
+                        <td><?= $fila['fechainicio'] ?></td>
+                        <td><?= $fila['nombre'] ?> <?= $fila['apellidos'] ?></td>
+                        <td>
+                            <!-- Botón para abrir detalles y comentarios del tiquete -->
+                            <button class="btn btn-sm btn-info" onclick="verComentarios(<?= $fila['idticket'] ?>)">
+                                <i class="fas fa-comments"></i> Detalles
+                            </button>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    <?php while ($fila = mysqli_fetch_assoc($tiquetes)): ?>
-                        <tr>
-                            <td><?= $fila['titulo'] ?></td>
-                            <td><?= ucfirst($fila['categoria']) ?></td>
-                            <td><?= ucfirst($fila['prioridad']) ?></td>
-                            <td><?= ucfirst($fila['estado']) ?></td>
-                            <td><?= $fila['fechainicio'] ?></td>
-                            <td><?= $fila['nombre'] ?> <?= $fila['apellidos'] ?></td>
-                            <td>
-                                <!-- Botón para abrir detalles y comentarios del tiquete -->
-                                <button class="btn btn-sm btn-info" onclick="verComentarios(<?= $fila['idticket'] ?>)">
-                                    <i class="fas fa-comments"></i> Detalles
-                                </button>
-                                <!-- Botón para editar tiquete -->
-                                <button class="btn btn-sm btn-warning" onclick="abrirModalTiquete(<?= $fila['idticket'] ?>)">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <!-- Botón para eliminar tiquete -->
-                                <button class="btn btn-sm btn-danger" onclick="eliminarTiquete(<?= $fila['idticket'] ?>)">
-                                    <i class="fas fa-trash"></i> Eliminar
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endwhile; ?>
-                </tbody>
-            </table>
-        </div>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
     </div>
+</div>
 </div>
 
 <!-- Modal Tiquete -->
@@ -177,6 +160,7 @@ include("../../template/top.php");
             </div>
             <div class="modal-body">
                 <input type="hidden" id="idticket" name="idticket">
+
                 <div class="form-group">
                     <label>Título</label>
                     <input type="text" class="form-control" id="titulo" name="titulo" required>
@@ -203,14 +187,6 @@ include("../../template/top.php");
                         <option value="alta">Alta</option>
                         <option value="media">Media</option>
                         <option value="baja">Baja</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Estado</label>
-                    <select class="form-control" id="estado" name="estado" required>
-                        <option value="abierto">Abierto</option>
-                        <option value="en proceso">En Proceso</option>
-                        <option value="cerrado">Cerrado</option>
                     </select>
                 </div>
             </div>
@@ -325,18 +301,16 @@ include("../../template/top.php");
         if (idticket != -1) {
             $.get("crearTiquete.php", {
                     action: "editar",
-                    idticket: idticket,
+                    idticket: idticket
                 })
                 .done(function(data) {
                     let ticket = JSON.parse(data);
-                    console.log("ID desde PHP:", ticket.idticket);
+
                     $("#idticket").val(ticket.idticket);
                     $("#titulo").val(ticket.titulo);
                     $("#descripcion").val(ticket.descripcion);
                     $("#categoria").val(ticket.categoria);
                     $("#prioridad").val(ticket.prioridad);
-                    $("#estado").val(ticket.estado);
-
 
                     $("#modalTiqueteLabel").text("Editar Tiquete");
                     $("#btn-guardarTiquete").html('<i class="fas fa-check"></i> Actualizar');
@@ -352,22 +326,17 @@ include("../../template/top.php");
 
     function guardarTiquete() {
         var idticket = $('#idticket').val();
-        console.log("Enviando idticket =", idticket);
-        // Obtener valores de los campos del formulario
         var titulo = $('[name=titulo]').val();
         var descripcion = $('[name=descripcion]').val();
         var categoria = $('[name=categoria]').val();
         var prioridad = $('[name=prioridad]').val();
-        var estado = $('[name=estado]').val();
 
         $.post("crearTiquete.php", {
                 action: "guardar", // Usamos el mismo action
-                idticket: idticket,
                 titulo: titulo,
                 descripcion: descripcion,
                 prioridad: prioridad,
-                categoria: categoria,
-                estado: $('#estado').val()
+                categoria: categoria
             })
             .done(function(response) {
                 console.log(response);
@@ -393,8 +362,6 @@ include("../../template/top.php");
                 console.log(response);
                 let data = JSON.parse(response);
                 if (data.success) {
-                    // Cerrar el modal de comentarios
-                    $('#modalComentarios').modal('hide');
                     alert("Comentario guardado exitosamente.");
                     $('#comentario').val('');
                     verComentarios();

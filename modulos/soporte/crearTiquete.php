@@ -17,13 +17,12 @@ if (!$idUsuario) {
 if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
     ini_set("display_errors", 1);
 
-    $idticket = isset($_POST['idticket']) ? intval($_POST['idticket']) : -1;
+
     $titulo = $_POST['titulo'];
     $descripcion = $_POST['descripcion'];
     $categoria = $_POST['categoria'];
     $prioridad = $_POST['prioridad'];
     $fechainicio = date('Y-m-d H:i');
-    $estado = 'abierto';
 
     if ($titulo == '' ||  $descripcion == '' ||  $prioridad == '' ||  $categoria == '') {
         echo json_encode(["success" => false, "error" => "Todos los campos son obligatorios."]);
@@ -39,9 +38,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'guardar') {
                     descripcion = '$descripcion',
                     categoria = '$categoria',
                     prioridad = '$prioridad',
-                    estado = '$estado'
+                    estado = '$estado',
                 WHERE idticket = $idticket";
-        echo "<script>alert('Tiquete Modificado Correctamente.');</script>";
     }
 
     if (mysqli_query($conn, $sql)) {
@@ -99,6 +97,7 @@ $tiquetes = mysqli_query($conn, "
     SELECT T0.*, T1.nombre, T1.apellidos 
     FROM ttickets T0
     JOIN tusuarios T1 ON T0.idusuario_informador = T1.id
+    WHERE T0.idusuario_informador = $idUsuario
 ");
 
 include("../../template/top.php");
@@ -144,17 +143,9 @@ include("../../template/top.php");
                             <td><?= $fila['fechainicio'] ?></td>
                             <td><?= $fila['nombre'] ?> <?= $fila['apellidos'] ?></td>
                             <td>
-                                <!-- Botón para abrir detalles y comentarios del tiquete -->
+                                <!-- Botón para abrir detalles del tiquete -->
                                 <button class="btn btn-sm btn-info" onclick="verComentarios(<?= $fila['idticket'] ?>)">
                                     <i class="fas fa-comments"></i> Detalles
-                                </button>
-                                <!-- Botón para editar tiquete -->
-                                <button class="btn btn-sm btn-warning" onclick="abrirModalTiquete(<?= $fila['idticket'] ?>)">
-                                    <i class="fas fa-edit"></i> Editar
-                                </button>
-                                <!-- Botón para eliminar tiquete -->
-                                <button class="btn btn-sm btn-danger" onclick="eliminarTiquete(<?= $fila['idticket'] ?>)">
-                                    <i class="fas fa-trash"></i> Eliminar
                                 </button>
                             </td>
                         </tr>
@@ -177,6 +168,7 @@ include("../../template/top.php");
             </div>
             <div class="modal-body">
                 <input type="hidden" id="idticket" name="idticket">
+
                 <div class="form-group">
                     <label>Título</label>
                     <input type="text" class="form-control" id="titulo" name="titulo" required>
@@ -203,14 +195,6 @@ include("../../template/top.php");
                         <option value="alta">Alta</option>
                         <option value="media">Media</option>
                         <option value="baja">Baja</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Estado</label>
-                    <select class="form-control" id="estado" name="estado" required>
-                        <option value="abierto">Abierto</option>
-                        <option value="en proceso">En Proceso</option>
-                        <option value="cerrado">Cerrado</option>
                     </select>
                 </div>
             </div>
@@ -319,24 +303,23 @@ include("../../template/top.php");
         });
     }
 
+
     function abrirModalTiquete(idticket) {
         limpiarModal();
 
         if (idticket != -1) {
             $.get("crearTiquete.php", {
                     action: "editar",
-                    idticket: idticket,
+                    idticket: idticket
                 })
                 .done(function(data) {
                     let ticket = JSON.parse(data);
-                    console.log("ID desde PHP:", ticket.idticket);
+
                     $("#idticket").val(ticket.idticket);
                     $("#titulo").val(ticket.titulo);
                     $("#descripcion").val(ticket.descripcion);
                     $("#categoria").val(ticket.categoria);
                     $("#prioridad").val(ticket.prioridad);
-                    $("#estado").val(ticket.estado);
-
 
                     $("#modalTiqueteLabel").text("Editar Tiquete");
                     $("#btn-guardarTiquete").html('<i class="fas fa-check"></i> Actualizar');
@@ -352,22 +335,17 @@ include("../../template/top.php");
 
     function guardarTiquete() {
         var idticket = $('#idticket').val();
-        console.log("Enviando idticket =", idticket);
-        // Obtener valores de los campos del formulario
         var titulo = $('[name=titulo]').val();
         var descripcion = $('[name=descripcion]').val();
         var categoria = $('[name=categoria]').val();
         var prioridad = $('[name=prioridad]').val();
-        var estado = $('[name=estado]').val();
 
         $.post("crearTiquete.php", {
                 action: "guardar", // Usamos el mismo action
-                idticket: idticket,
                 titulo: titulo,
                 descripcion: descripcion,
                 prioridad: prioridad,
-                categoria: categoria,
-                estado: $('#estado').val()
+                categoria: categoria
             })
             .done(function(response) {
                 console.log(response);
@@ -393,9 +371,6 @@ include("../../template/top.php");
                 console.log(response);
                 let data = JSON.parse(response);
                 if (data.success) {
-                    // Cerrar el modal de comentarios
-                    $('#modalComentarios').modal('hide');
-                    alert("Comentario guardado exitosamente.");
                     $('#comentario').val('');
                     verComentarios();
                 } else {
