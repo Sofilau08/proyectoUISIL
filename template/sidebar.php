@@ -1,33 +1,40 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
+<!-- Sidebar - Brand -->
+<a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+    <img src="<?=$base_url?>img/logopc_blanco.png" class="img-fluid">
+</a>
+<!-- Divider -->
+<hr class="sidebar-divider my-0">
+
+<!-- Nav Item - Dashboard -->
+<li class="nav-item active">
+    <a class="nav-link" href="../../modulos/proyectos/grafica.php">
+        <i class="fas fa-fw fa-tachometer-alt"></i>
+        <span>Inicio</span></a>
+</li>
 
 
-    <li class="nav-item active">
-        <a class="nav-link" href="<?= $base_url ?>modulos/recursos/seguimiento.php">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Aprobacion</span></a>
-    </li>
-
-    <?php
-    $sql = "SELECT * FROM tprivilegios WHERE estado = 1 ORDER BY nombre ASC";
-    $query = mysqli_query($conn, $sql);
-    while ($row = mysqli_fetch_assoc($query)) {
-        $idPrivilegio = $row['id'];
-        $lotiene = 0;
-        $sqlUsuario = "SELECT * FROM tprivilegiosusuario WHERE idUsuario = $idUsuario AND idPrivilegio = $idPrivilegio";
-        $queryUsuario = mysqli_query($conn, $sqlUsuario);
-        if (mysqli_num_rows($queryUsuario) != 0) {
+<?php
+$sql = "SELECT * FROM tprivilegios WHERE estado = 1 ORDER BY nombre ASC";
+$query = mysqli_query($conn, $sql);
+while($row=mysqli_fetch_assoc($query)){
+    $idPrivilegio = $row['id'];
+    $lotiene = 0;
+    $sqlUsuario = "SELECT * FROM tprivilegiosusuario WHERE idUsuario = $idUsuario AND idPrivilegio = $idPrivilegio";
+    $queryUsuario = mysqli_query($conn, $sqlUsuario);
+    if (mysqli_num_rows($queryUsuario) != 0){
     ?>
-            <li class="nav-item active">
-                <a class="nav-link" href="<?= $base_url . $row['url'] ?>">
-                    <i class="fa <?= $row['icono'] ?>"></i>
-                    <span><?= $row['nombre'] ?></span></a>
-            </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="<?=$base_url.$row['url']?>">
+            <i class="fa <?=$row['icono']?>"></i>
+            <span><?=$row['nombre']?></span></a>
+    </li>
     <?php
-        }
     }
+}
 
-    /*
+/*
 
 <!-- Divider -->
 <hr class="sidebar-divider">
@@ -73,10 +80,10 @@
 </li>
 
 */
-    ?>
-    <li class="nav-item active">
-        <a class="nav-link" href="<?= $base_url ?>logout.php">
-            <i class="fa fa-lock"></i>
-            <span>Cerrar sesión</span></a>
-    </li>
+?>
+<li class="nav-item active">
+    <a class="nav-link" href="<?=$base_url?>logout.php">
+    <i class="fa fa-lock"></i>
+        <span>Cerrar sesión</span></a>
+</li>
 </ul>
