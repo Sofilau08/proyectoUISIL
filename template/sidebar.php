@@ -1,36 +1,6 @@
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
-    <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
-        <img src="<?= $base_url ?>img/logopc_blanco.png" class="img-fluid">
-    </a>
-    <!-- Divider -->
-    <hr class="sidebar-divider my-0">
 
-    <!-- Nav Item - Dashboard -->
-    <li class="nav-item active">
-        <a class="nav-link" href="<?= $base_url ?>index.php">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Inicio</span></a>
-    </li>
-
-    <li class="nav-item active">
-        <a class="nav-link" href="<?= $base_url ?>modulos/recursos/materiales.php">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Materiales</span></a>
-    </li>
-
-    <li class="nav-item active">
-        <a class="nav-link" href="<?= $base_url ?>modulos/recursos/recursoh.php">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Recurso Humano</span></a>
-    </li>
-
-    <li class="nav-item active">
-        <a class="nav-link" href="<?= $base_url ?>modulos/recursos/financiero.php">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
-            <span>Financiero</span></a>
-    </li>
 
     <li class="nav-item active">
         <a class="nav-link" href="<?= $base_url ?>modulos/recursos/seguimiento.php">
