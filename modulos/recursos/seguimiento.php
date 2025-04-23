@@ -340,7 +340,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'denegar_recurso') {
         </div>
     </div>
 </div>
-
 <style>
 .grid-container {
     display: grid;
