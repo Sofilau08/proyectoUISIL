@@ -39,6 +39,7 @@ if ($_POST['action'] == 'actualizar_tarea') {
 }
 </style>
 
+
 <div class="container">
     <h2 class="text-center my-4">Lista de Tareas</h2>
     <div class="accordion" id="accordionTareas">
@@ -99,13 +100,13 @@ if ($_POST['action'] == 'actualizar_tarea') {
 
 <script>
 function guardarCambiosTarea(idtarea) {
-    var estadotarea = $('.estadotarea').val(); // Valor del estado de la tarea seleccionado
-    var comentario_respuesta = $('#comentarioRespuesta').val(); // Obtener el comentario
+    var estadotarea = $('.estadotarea').val(); 
+    var comentario_respuesta = $('#comentarioRespuesta').val(); 
     alert(idtarea);
     $.post("tareas.php", {
         action: "actualizar_tarea",
         idtarea: idtarea,
-        comentario: comentario_respuesta, // Enviar el comentario correctamente
+        comentario: comentario_respuesta, 
         estadotarea: estadotarea
     }, function(response) {
         try {

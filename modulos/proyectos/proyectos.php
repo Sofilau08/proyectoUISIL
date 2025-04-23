@@ -1062,7 +1062,6 @@ function limpiarModalGasto() {
 
 function abrirModalAsignarGasto(idProyecto) {
     limpiarModalGasto();
-    alert(idProyecto);
     $('#idproyectogastorefinanciero').val(-1);
     $('#idproyectogasto').val(idProyecto);
     cargarGastos(idProyecto);
