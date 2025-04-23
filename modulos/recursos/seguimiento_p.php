@@ -5,17 +5,25 @@ include("../../conn/conn.php");
 $resultado = mysqli_query($conn, "SELECT SUM(preciott) AS total_materiales FROM tmateriales WHERE estado = '1'");
 $monto = mysqli_query($conn, "SELECT SUM(monto) AS total_financiero FROM trefinanciero WHERE estado = '1'");
 $salariot = mysqli_query($conn, "SELECT SUM(SalarioT) AS total_salarios FROM trehumano WHERE estado = '1'");
+$presupuesto_query = mysqli_query($conn, "SELECT SUM(presupuesto) AS total_presupuesto FROM tproyectos");
 
 // Calcular valores
 $total_materiales = mysqli_fetch_assoc($resultado)['total_materiales'];
 $total_financiero = mysqli_fetch_assoc($monto)['total_financiero'];
 $total_salarios = mysqli_fetch_assoc($salariot)['total_salarios'];
+$total_presupuesto = mysqli_fetch_assoc($presupuesto_query)['total_presupuesto'];
 
 $total_gastos = $total_materiales + $total_financiero + $total_salarios;
 $presupuesto_restante = $total_presupuesto - $total_gastos;
 
-// Generar alerta si el presupuesto restante es menor a un umbral
-$alerta = $presupuesto_restante < 1000 ? "¡Atención! El presupuesto restante está cerca de agotarse." : "";
+// Generar alertas según el estado del presupuesto restante
+if ($presupuesto_restante <= 0) {
+    $alerta = "<div class='alert alert-danger' role='alert'>¡Presupuesto agotado!</div>";
+} elseif ($presupuesto_restante <= $total_presupuesto * 0.1) {
+    $alerta = "<div class='alert alert-warning' role='alert'>¡Atención! El presupuesto restante está por debajo del 10%.</div>";
+} else {
+    $alerta = "";
+}
 ?>
 
 <?php include("../../template/top.php"); ?>
@@ -26,11 +34,7 @@ $alerta = $presupuesto_restante < 1000 ? "¡Atención! El presupuesto restante e
             <h6 class="m-0 font-weight-bold text-primary">Seguimiento del Presupuesto</h6>
         </div>
         <div class="card-body">
-            <?php if ($alerta): ?>
-                <div class="alert alert-warning" role="alert">
-                    <?= $alerta ?>
-                </div>
-            <?php endif; ?>
+            <?= $alerta ?>
             <div class="table-responsive">
                 <table class="table table-bordered" id="tablaResumen" width="100%" cellspacing="0">
                     <thead>
@@ -38,7 +42,7 @@ $alerta = $presupuesto_restante < 1000 ? "¡Atención! El presupuesto restante e
                             <th>Materiales</th>
                             <th>Financiero</th>
                             <th>Recurso Humano</th>
-                            <th>Presupuesto</th>
+                            <th>Presupuesto Total</th>
                             <th>Presupuesto Restante</th>
                         </tr>
                     </thead>
