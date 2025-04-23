@@ -114,7 +114,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'denegar_recurso') {
             <h6 class="m-0 font-weight-bold text-primary" id="tituloMateriales">
                 <?php 
                 if ($estado == '0') {
-                    echo "Pendientes de aprobación Material";
+                    echo "Material pendiente de aprobación";
                 } elseif ($estado == '1') {
                     echo "Materiales Aprobados";
                 } elseif ($estado == '2') {
@@ -192,11 +192,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'denegar_recurso') {
             <h6 class="m-0 font-weight-bold text-primary" id="tituloFinancieros">
                 <?php 
                 if ($estado == '0') {
-                    echo "Pendientes de aprobación Dato Financiero";
+                    echo "Gastos pendientes de aprobación";
                 } elseif ($estado == '1') {
-                    echo "Datos Financieros Aprobados";
+                    echo "Gastos Aprobados";
                 } elseif ($estado == '2') {
-                    echo "Datos Financieros Denegados";
+                    echo "Gastos Denegados";
                 }
                 ?>
             </h6>
@@ -268,11 +268,11 @@ if (isset($_POST['action']) && $_POST['action'] == 'denegar_recurso') {
             <h6 class="m-0 font-weight-bold text-primary" id="tituloRecursoHumano">
                 <?php 
                 if ($estado == '0') {
-                    echo "Pendientes de aprobación Recurso Humano";
+                    echo "Salarios pendientes de aprobación";
                 } elseif ($estado == '1') {
-                    echo "Recursos Humanos Aprobados";
+                    echo "Salarios Aprobados";
                 } elseif ($estado == '2') {
-                    echo "Recursos Humanos Denegados";
+                    echo "Salarios Denegados";
                 }
                 ?>
             </h6>

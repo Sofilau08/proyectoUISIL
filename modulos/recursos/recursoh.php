@@ -98,11 +98,11 @@ $resultado = mysqli_query($conn, "SELECT tre.*, CONCAT(tu.nombre, ' ', tu.apelli
 <div class="container">
     <div class="text-right">
         <button class="btn btn-sm btn-secondary mb-3" onclick="abrirModalProyecto(-1)">
-            <i class="fa fa-plus"></i> Agregar recurso humano</button>
+            <i class="fa fa-plus"></i> Crear solicitud de pago</button>
     </div>
     <div class="card shadow mb-4">  
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Lista de Datos de recursos humanos</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Recursos Humanos</h6>
         </div>
         <div class="card-body">
             <div class="table-responsive">
