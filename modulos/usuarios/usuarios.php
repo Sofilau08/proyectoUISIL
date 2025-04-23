@@ -38,6 +38,10 @@ if ($_POST['action'] == 'agregar_usuario'){
     <label for="fechaNac">Fecha de Nacimiento</label>
     <input type="date" class="form-control" id="fechaNac" required>
     </div> 
+    <div class="form-group">
+    <label for="salario_hora">Salario Por Hora</label>
+    <input type="text" class="form-control" id="salario_hora" required>
+    </div> 
     <button type="submit" onclick="guardarUsuario()" class="btn btn-primary">Enviar</button>
 
     <?php 
@@ -88,6 +92,10 @@ if ($_POST['action'] == 'editar_usuario'){
                 <label for="fechaNac">Fecha de Nacimiento</label>
                 <input type="date" class="form-control" id="editar_fechaNac" required  value="<?=$rowUsuario['fechaNac']?>">
             </div> 
+            <div class="form-group">
+                <label for="editarsalario_hora">Salario Por Hora</label>
+                <input type="text" class="form-control" id="editarsalario_hora" required  value="<?=$rowUsuario['fechaNac']?>">
+            </div> 
             <button type="submit" onclick="modificarUsuario()" class="btn btn-primary">Modificar</button>
 
 
@@ -102,7 +110,8 @@ if ($_POST['action'] == 'editar_usuario'){
             var usuario = $('#editar_usuario').val();
             var password = $('#editar_password').val();
             var direccion = $('#editar_direccion').val();
-            var fNac = $('#editar_fNac').val();
+            var fechaNac = $('#editar_fechaNac').val();
+            var salario_hora = $('#editarsalario_hora').val();
 
             $.post("usuarios.php", { action: "modificar_usuario", 
                 id: id,
@@ -114,7 +123,8 @@ if ($_POST['action'] == 'editar_usuario'){
                 usuario: usuario,    
                 password: password,
                 direccion: direccion,
-                fNac: fNac
+                fechaNac: fechaNac,
+                salario_hora: salario_hora
             })
             .done(function( data ) {
                 cargarUsuarios();
@@ -160,6 +170,7 @@ if ($_POST['action'] == 'cargar_usuarios'){
                 <th>Usuario</th>
                 <th>Teléfono</th>
                 <th>Email</th>
+                <th>Salario por hora</th>
             </thead>
             <tbody>
                 <?php while($row=mysqli_fetch_assoc($query)){ ?>
@@ -174,6 +185,7 @@ if ($_POST['action'] == 'cargar_usuarios'){
                         <td><?=$row['usuario']?></td>
                         <td><?=$row['telefono']?></td>
                         <td><?=$row['email']?></td>
+                        <td><?=$row['salario_hora']?></td>
                     </tr>
                 <?php } ?>
             </tbody>
@@ -193,9 +205,10 @@ if ($_POST['action'] == 'guardar_usuario'){
     $usuario = $_POST['usuario'];
     $password = hash('sha256', $_POST['password']);
     $direccion = $_POST['direccion'];
-    $fNac = $_POST['fNac'];
+    $fechaNac = $_POST['fechaNac'];
+    $salario_hora = $_POST['salario_hora'];
 
-    $sql = "INSERT tusuarios VALUES (null, '$identificacion', '$nombre', '$apellidos', '$telefono', '$email', '$usuario', '$password', '$direccion', '$fNac', '', '', 1)";
+    $sql = "INSERT tusuarios VALUES (null, '$identificacion', '$nombre', '$apellidos', '$telefono', '$email', '$usuario', '$password', '$direccion', '$fechaNac', '', '', 1, '$salario_hora')";
     $query = mysqli_query($conn, $sql);
 
     exit();
@@ -210,7 +223,9 @@ if ($_POST['action'] == 'modificar_usuario'){
     $email = $_POST['email'];
     $usuario = $_POST['usuario'];
     $direccion = $_POST['direccion'];
-    $fNac = $_POST['fNac'];
+    $fechaNac = $_POST['fechaNac'];
+    
+    $salario_hora = $_POST['salario_hora'];
 
     if ($_POST['password'] != ''){
         $password = hash('sha256', $_POST['password']);
@@ -223,7 +238,8 @@ if ($_POST['action'] == 'modificar_usuario'){
         usuario = '$usuario', 
         password = '$password',
         direccion = '$direccion', 
-        fechaNac = '$fNac' 
+        fechaNac = '$fechaNac',
+        salario_hora = '$salario_hora'
         WHERE id = $id";
     }else{
         $sql = "UPDATE tusuarios SET 
@@ -234,7 +250,8 @@ if ($_POST['action'] == 'modificar_usuario'){
         email = '$email', 
         usuario = '$usuario', 
         direccion = '$direccion', 
-        fechaNac = '$fNac' 
+        fechaNac = '$fechaNac',
+        salario_hora = '$salario_hora'
         WHERE id = $id";
     }
     
@@ -322,7 +339,7 @@ function guardarUsuario(){
     var usuario = $('#usuario').val();
     var password = $('#password').val();
     var direccion = $('#direccion').val();
-    var fNac = $('#fNac').val();
+    var fechaNac = $('#fechaNac').val();
 
     $.post("usuarios.php", { action: "guardar_usuario", 
         identificacion: identificacion,
@@ -333,7 +350,7 @@ function guardarUsuario(){
         usuario: usuario,    
         password: password,
         direccion: direccion,
-        fNac: fNac
+        fechaNac: fechaNac
     })
     .done(function( data ) {
         cargarUsuarios();
