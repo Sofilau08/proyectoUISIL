@@ -1,5 +1,18 @@
 <?php include("../../conn/conn.php"); ?>
-<?php $resultado = mysqli_query($conn, "SELECT * FROM ttareas");
+<?php
+if (isset($_COOKIE['usuario'])) {
+    $idusuario = $_COOKIE['usuario'];
+    // ya podés usar $idusuario para consultas o mostrar info
+} else {
+    // redirigir si no hay cookie (usuario no ha iniciado sesión)
+    header('Location: login.php');
+    exit();
+}
+?>
+
+<?php $resultado = mysqli_query($conn, "SELECT * FROM ttareas WHERE idusuario = $idusuario");
+
+
 
 $stmtCheck = $conn->prepare("SELECT estadotarea FROM ttareas WHERE idtarea = ?");
 $stmtCheck->bind_param("i", $idtarea);
