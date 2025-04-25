@@ -5,7 +5,16 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Obtener idusuario desde cookie
+
+if (isset($_COOKIE['usuario'])) {
+    $idUsuario = $_COOKIE['usuario'];
+    // ya podés usar $idusuario para consultas o mostrar info
+} else {
+    // redirigir si no hay cookie (usuario no ha iniciado sesión)
+    header('Location: login.php');
+    exit();
+}
+
 $idUsuario = $idUsuario;
 
 if (!$idUsuario) {
