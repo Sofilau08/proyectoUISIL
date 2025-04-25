@@ -10,7 +10,8 @@ if (isset($_COOKIE['usuario'])) {
 }
 ?>
 
-<?php $resultado = mysqli_query($conn, "SELECT * FROM ttareas WHERE idusuario = $idusuario");
+<?php $resultado = mysqli_query($conn, "SELECT * FROM ttareas WHERE idusuario = $idusuario AND estadotarea != 'finalizado'");
+
 
 
 
@@ -66,10 +67,16 @@ if ($_POST['action'] == 'actualizar_tarea') {
 }
 </style>
 
+<div class="container mb-4">
+    <div class="d-flex justify-content-start align-items-center" id="botonesEstado">
+        <a class="btn btn-success mr-2" href="tareasfinalizadas.php">
+            <i class="fas fa-history"></i> Historial de Tareas
+        </a>
+    </div>
+</div>
 <div class="card shadow mb-4">
     <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary"></h6>
-        Tareas
+        <h6 class="m-0 font-weight-bold text-primary">Tareas</h6>
     </div>
     <div class="card-body">
         <div class="accordion" id="accordionTareas">
