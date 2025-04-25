@@ -35,6 +35,7 @@ if ($_POST['action'] == 'actualizar_tarea') {
 
         $stmt = $conn->prepare("UPDATE ttareas SET comentario_respuesta = ?, estadotarea = ? WHERE idtarea = ?");
         $stmt->bind_param("ssi", $comentario, $estadotarea, $idtarea);
+        
         $stmt->execute();
 
         echo json_encode(["success" => true]);
@@ -100,8 +101,9 @@ if ($_POST['action'] == 'actualizar_tarea') {
                         <form class="form-actualizar-tarea" data-id="<?= $fila['idtarea'] ?>">
                             <div class="mb-3">
                                 <label for="comentarioRespuesta" class="form-label">Comentario de Respuesta</label>
-                                <textarea class="form-control" id="comentarioRespuesta<?= $id ?>" name="comentario_respuesta"
-                                rows="3" placeholder="Escribe aquí tu comentario..." <?= $disabledAttr ?>></textarea>
+                                <textarea class="form-control" id="comentarioRespuesta<?= $id ?>"
+                                    name="comentario_respuesta" rows="3" placeholder="Escribe aquí tu comentario..."
+                                    <?= $disabledAttr ?>><?= $fila['comentario_respuesta'] ?></textarea>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><strong>Estado de la Tarea:</strong></label>
@@ -136,7 +138,6 @@ if ($_POST['action'] == 'actualizar_tarea') {
 
 
 <script>
-
 function guardarCambiosTarea(idtarea) {
     var estadotarea = $('#estadoTarea' + idtarea).val();
     var comentario_respuesta = $('#comentarioRespuesta' + idtarea).val();
@@ -147,20 +148,36 @@ function guardarCambiosTarea(idtarea) {
         comentario: comentario_respuesta,
         estadotarea: estadotarea
     }, function(response) {
+        console.log("Respuesta del servidor:", response);
         try {
             let data = JSON.parse(response);
             if (data.success) {
-                alert("Tarea actualizada correctamente");
-                location.reload(); // recargar para reflejar el estado y bloquear campos si cambia a finalizado
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Tarea actualizada!',
+                    text: 'La tarea se actualizó correctamente.',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    location
+                .reload(); 
+                });
             } else {
-                alert("Error: " + data.error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al actualizar tarea',
+                    text: data.error || 'Ocurrió un problema al actualizar la tarea.'
+                });
             }
         } catch (e) {
-            alert("Respuesta inesperada: " + e);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error inesperado',
+                text: 'No se pudo interpretar la respuesta del servidor.'
+            });
         }
     });
 }
-
 </script>
 
 

@@ -776,25 +776,38 @@ function guardarProyecto() {
     var presupuesto = $('#presupuesto').val();
 
     $.post("proyectos.php", {
-            action: "guardar", // Usamos el mismo action
-            idproyecto: id,
-            nombre: nombre,
-            fechainicio: fechainicio,
-            fechafin: fechafin,
-            descripcion: descripcion,
-            estado: estado,
-            idusuario: idusuario,
-            presupuesto: presupuesto
-        })
-        .done(function(response) {
-            let data = JSON.parse(response);
-            if (data.success) {
-                $('#modalProyecto').modal('hide');
-                cargarProyectos();
-            } else {
-                alert("Error: " + data.error);
-            }
-        });
+        action: "guardar",
+        idproyecto: id,
+        nombre: nombre,
+        fechainicio: fechainicio,
+        fechafin: fechafin,
+        descripcion: descripcion,
+        estado: estado,
+        idusuario: idusuario,
+        presupuesto: presupuesto
+    }).done(function(response) {
+        let data = JSON.parse(response);
+        if (data.success) {
+            $('#modalProyecto').modal('hide');
+
+            // Mostrar alerta con SweetAlert2
+            Swal.fire({
+                icon: 'success',
+                title: '¡Proyecto guardado!',
+                text: 'El proyecto se guardó exitosamente.',
+                showConfirmButton: false,
+                timer: 2000
+            });
+
+            cargarProyectos();
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al guardar',
+                text: data.error || 'Ocurrió un problema al guardar el proyecto.',
+            });
+        }
+    });
 }
 
 function eliminarProyecto(idproyecto) {
@@ -923,8 +936,21 @@ function guardarTareas() {
         let data = JSON.parse(response);
         if (data.success) {
             $('#modalTareas').modal('hide');
+            Swal.fire({
+                icon: 'success',
+                title: '¡Tarea guardada!',
+                text: 'La tarea se guardó exitosamente.',
+                showConfirmButton: false,
+                timer: 2000
+            });
+
+            cargarTareas(id);
         } else {
-            alert("Error: " + data.error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al guardar',
+                text: data.error || 'Hubo un problema al guardar la tarea.',
+            });
         }
     });
 }
@@ -995,7 +1021,11 @@ function asignarMaterialAProyectoDesdeModal() {
     const cantidad = $('#cantidad').val();
 
     if (!idmaterial || !cantidad || cantidad <= 0) {
-        alert("Debe seleccionar un material y una cantidad válida.");
+        Swal.fire({
+            icon: 'warning',
+            title: 'Datos incompletos',
+            text: 'Debe seleccionar un material y una cantidad válida.'
+        });
         return;
     }
 
@@ -1008,13 +1038,27 @@ function asignarMaterialAProyectoDesdeModal() {
         const data = JSON.parse(response);
         if (data.success) {
             $('#modalAsignarMaterial').modal('hide');
-            alert("Material asignado correctamente.");
-            location.reload();
+
+            Swal.fire({
+                icon: 'success',
+                title: '¡Material asignado!',
+                text: 'El material fue asignado correctamente al proyecto.',
+                showConfirmButton: false,
+                timer: 2000
+            }).then(() => {
+                location.reload();
+            });
+
         } else {
-            alert("Error: " + data.error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al asignar material',
+                text: data.error || 'Ocurrió un problema al asignar el material.'
+            });
         }
     });
 }
+
 
 function cargarMateriales(idProyecto) {
     $.get("proyectos.php", {
@@ -1166,16 +1210,34 @@ function guardarGastos() {
             let data = JSON.parse(response);
             if (data.success) {
                 $('#agregarGastoModal').modal('hide');
-                alert("Gasto guardado correctamente");
-                cargarGastos(idproyecto);
+
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Gasto guardado!',
+                    text: 'El gasto fue registrado correctamente.',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    cargarGastos(idproyecto);
+                });
+
             } else {
-                alert("Error: " + data.error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al guardar gasto',
+                    text: data.error || 'Ocurrió un problema al registrar el gasto.'
+                });
             }
         } catch (e) {
-            alert("Respuesta inesperada: " + e);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error inesperado',
+                text: 'No se pudo interpretar la respuesta del servidor.'
+            });
         }
     });
 }
+
 
 
 cargarProyectos();
