@@ -48,48 +48,60 @@ $chartDataString = implode(",", $chartData);
 ?>
 
 <?php include("../../template/top.php"); ?>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Progreso de los proyectos</h6>
+    </div>
+    <html>
 
-<html>
-  <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load('current', {'packages':['corechart']});
-      google.charts.setOnLoadCallback(drawChart);
+    <head>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript">
+        google.charts.load('current', {
+            'packages': ['corechart']
+        });
+        google.charts.setOnLoadCallback(drawChart);
 
-      function drawChart() {
-        var data = google.visualization.arrayToDataTable([
-          <?php echo $chartDataString; ?>
-        ]);
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                <?php echo $chartDataString; ?>
+            ]);
 
-        var options = {
-          title: 'Progreso de Proyectos',
-          hAxis: { title: 'Proyecto' },
-          vAxis: {
-            title: 'Progreso (%)',
-            minValue: 0,
-            maxValue: 100
-          },
-          legend: { position: 'none' },
-          annotations: {
-            alwaysOutside: true,
-            textStyle: {
-              fontSize: 12,
-              color: '#000',
-              auraColor: 'none'
-            }
-          }
-        };
+            var options = {
+                title: 'Progreso de Proyectos',
+                hAxis: {
+                    title: 'Proyecto'
+                },
+                vAxis: {
+                    title: 'Progreso (%)',
+                    minValue: 0,
+                    maxValue: 100
+                },
+                legend: {
+                    position: 'none'
+                },
+                annotations: {
+                    alwaysOutside: true,
+                    textStyle: {
+                        fontSize: 12,
+                        color: '#000',
+                        auraColor: 'none'
+                    }
+                }
+            };
 
-        var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
-        chart.draw(data, options);
-      }
-    </script>
-  </head>
-  <body>
-    <div id="chart_div" style="width: 900px; height: 500px;"></div>
-  </body>
-</html>
+            var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+            chart.draw(data, options);
+        }
+        </script>
+    </head>
 
+    <body>
+        <div id="chart_div" style="width: 900px; height: 500px;"></div>
+    </body>
+
+    </html>
+</div>
 <?php include("../../template/bottom.php"); ?>
 
 

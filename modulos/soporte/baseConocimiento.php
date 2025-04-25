@@ -146,7 +146,7 @@ include("../../template/top.php");
         </table>
     </div>
 </div>
-</div>
+
 
 <!-- Modal Tiquete -->
 <div class="modal fade" id="modalTiquete" tabindex="-1" role="dialog" aria-labelledby="modalTiqueteLabel" aria-hidden="true">
