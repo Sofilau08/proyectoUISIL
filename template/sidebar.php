@@ -9,7 +9,7 @@
 
 <!-- Nav Item - Dashboard -->
 <li class="nav-item active">
-    <a class="nav-link" href="../../modulos/proyectos/grafica.php">
+<a class="nav-link" href="/proyectoUISIL/index.php">
         <i class="fas fa-fw fa-tachometer-alt"></i>
         <span>Inicio</span></a>
 </li>
